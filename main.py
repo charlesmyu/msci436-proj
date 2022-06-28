@@ -26,7 +26,7 @@ def predict(df, strength):
 
 def input_func():
     Age = float(st.number_input('Applicant Age', min_value = 18))
-    CreditScore = float(st.number_input('Credit Score', min_value = 0, max_value = 850)) / 12.6866
+    CreditScore = float(st.slider('Credit Score', min_value = 0, max_value = 850)) / 12.6866
     BankCustomer = int(binary_func(st.radio('Bank Customer?', options = ['Yes', 'No'])))
     DriversLicense = int(binary_func(st.radio('Driver\'s License?', options = ['Yes', 'No'])))
     Debt = float(st.number_input('Applicant Debt ($)', min_value = 0)) / 1000
