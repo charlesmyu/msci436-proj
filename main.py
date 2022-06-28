@@ -2,9 +2,6 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-def main():
-    pass
-
 def predict(df):
     transformer = joblib.load('models/transformer.sav')
     pca = joblib.load('models/pca.sav')
