@@ -2,10 +2,19 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-def predict(df):
-    transformer = joblib.load('models/transformer.sav')
-    pca = joblib.load('models/pca.sav')
-    bgc = joblib.load('models/bgc.sav')
+models = {
+        'Low': 'model-11',
+        'Medium-Low': 'model-15',
+        'Medium-High': 'model-19',
+        'High': 'model-23'
+    }
+
+def predict(df, strength):
+    model = models.get(strength)
+
+    transformer = joblib.load(f'model/{model}/transformer.sav')
+    pca = joblib.load(f'model/{model}/pca.sav')
+    bgc = joblib.load(f'model/{model}/bgc.sav')
     
     df = helper_func(df)
     
@@ -16,21 +25,19 @@ def predict(df):
     return ypred
 
 def input_func():
-    # Need to natively scale some of the inputs (e.g. debt, income, credit score are all funky atm)
     Age = float(st.number_input('Applicant Age', min_value = 18))
-    Debt = float(st.number_input('Applicant Debt (Thousands of Dollars)', min_value = 0))
+    CreditScore = float(st.number_input('Credit Score', min_value = 0, max_value = 850)) / 12.6866
     BankCustomer = int(binary_func(st.radio('Bank Customer?', options = ['Yes', 'No'])))
-    Industry = st.selectbox('Industry', options = ['Utilities', 'Real Estate', 'Education', 'Research', 'Transport', 'Other'])
-    YearsEmployed = float(st.number_input('Years Employed', min_value = 0))
+    DriversLicense = int(binary_func(st.radio('Driver\'s License?', options = ['Yes', 'No'])))
+    Debt = float(st.number_input('Applicant Debt ($)', min_value = 0)) / 1000
     PriorDefault = int(binary_func(st.radio('Prior Defaults?', options = ['Yes', 'No'])))
     Employed = int(binary_func(st.radio('Employed?', options = ['Yes', 'No'])))
-    CreditScore = float(st.number_input('Credit Score', min_value = 0))
-    DriversLicense = int(binary_func(st.radio('Driver\'s License?', options = ['Yes', 'No'])))
-    Income = float(st.number_input('Income (Thousands of Dollars)', min_value = 0))
+    Industry = st.selectbox('Industry', options = ['Utilities', 'Real Estate', 'Education', 'Research', 'Transport', 'Other'])
+    YearsEmployed = float(st.number_input('Years Employed', min_value = 0))
+    Income = float(st.number_input('Income ($)', min_value = 0)) / 1000
     
     df = pd.DataFrame({'Age':[Age], 'Debt': [Debt], 'BankCustomer': [BankCustomer], 'Industry':[Industry], 'YearsEmployed':[YearsEmployed], 'PriorDefault':[PriorDefault], 'Employed':[Employed], 'CreditScore':[CreditScore], 'DriversLicense':[DriversLicense], 'Income':[Income]})
     
-    # Output is currently unformatted, need to clean up
     return df
     
 def binary_func(input):
@@ -83,6 +90,9 @@ def helper_func(df):
     return df
 
 st.title('Credit Card Application DSS')
-df = input_func()
-if st.button('Run Model'):
-    st.write(predict(df))
+with st.form(key='input'):
+    df = input_func()
+    strength = st.select_slider(label = 'Evaluation Strictness', options = models.keys())
+    if st.form_submit_button('Run Model'):
+        res = predict(df, strength)
+        a = st.header('Result: Recommend Accept Application') if res[0] else st.header('Result: Recommend Deny Application')
