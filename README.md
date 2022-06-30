@@ -17,5 +17,7 @@ The UI was created using the Streamlit library, which was configured to take in 
 
 ## Sources
 Data: https://www.kaggle.com/datasets/samuelcortinhas/credit-card-approval-clean-data 
+
 Data origin: https://archive.ics.uci.edu/ml/datasets/Credit+Approval?msclkid=200008bdc4a311ec9f500a3245a2bfb1
+
 Model: https://www.kaggle.com/code/sns5154/credit-approval-system-val-92-86-test-82-61 
