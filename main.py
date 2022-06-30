@@ -3,10 +3,10 @@ import joblib
 import pandas as pd
 
 models = {
-        'Low': 'model-11',
-        'Medium-Low': 'model-15',
-        'Medium-High': 'model-19',
-        'High': 'model-23'
+        'Low': 'model-23',
+        'Medium-Low': 'model-19',
+        'Medium-High': 'model-15',
+        'High': 'model-11'
     }
 
 def predict(df, strength):
@@ -92,7 +92,7 @@ def helper_func(df):
 st.title('Credit Card Application DSS')
 with st.form(key='input'):
     df = input_func()
-    strength = st.select_slider(label = 'Evaluation Strictness', options = models.keys())
+    strength = st.select_slider(label = 'Sensitivity', options = models.keys())
     if st.form_submit_button('Run Model'):
         res = predict(df, strength)
         a = st.header('Result: Recommend Accept Application') if res[0] else st.header('Result: Recommend Deny Application')
